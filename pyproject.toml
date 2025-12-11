@@ -1,0 +1,30 @@
+[project]
+name = "tinymatrix"
+version = "0.1.0"
+description = "A tiny, dependency-free Matrix helper library with basic linear-algebra-like operations (construction, arithmetic, matmul, transpose, slicing)."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+authors = [
+    { name = "Dylan Dsouza" },
+]
+
+license = "MIT"
+
+keywords = ["matrix", "linear-algebra", "tiny", "education"]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "rich>=14.0.0",
+    "ruff>=0.12.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
