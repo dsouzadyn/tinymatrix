@@ -116,3 +116,141 @@ def test_static_constructors():
     assert O.M == [[1.0, 1.0], [1.0, 1.0]]
     O = Matrix.ones(2, 2)
     assert O.M == [[1.0, 1.0], [1.0, 1.0]]
+
+
+# --- Robustness and Error Handling ---
+
+def test_init_invalid_inputs():
+    """Test initialization with invalid arguments."""
+    with pytest.raises(ValueError, match="Provide either matrix or"):
+        Matrix()
+    with pytest.raises(ValueError, match="Provide either matrix or"):
+        Matrix(m=5)
+    with pytest.raises(ValueError, match="Provide either matrix or"):
+        Matrix(n=5)
+
+
+def test_init_ragged_matrix():
+    """Test initialization with consistent row lengths."""
+    ragged = [[1, 2], [3, 4, 5]]
+    with pytest.raises(ShapeError, match="All rows must have equal length"):
+        Matrix(matrix=ragged)
+
+
+def test_eq_robustness():
+    """Test equality against different types and shapes."""
+    A = Matrix(3, 3)
+    assert A != "string"
+    assert A != 123
+    assert A != Matrix(2, 3)
+    assert A != Matrix(3, 2)
+
+
+def test_getitem_errors():
+    """Test getitem with invalid indices and types."""
+    A = Matrix.identity(3)
+    
+    # Index out of bounds
+    with pytest.raises(IndexError):
+        _ = A[10, 0]
+    with pytest.raises(IndexError):
+        _ = A[0, 10]
+        
+    # Invalid index type
+    with pytest.raises(TypeError, match="Invalid index type"):
+        _ = A["invalid"]
+    with pytest.raises(TypeError, match="Invalid index type"):
+        _ = A[1.5]
+
+
+def test_getitem_slice_step():
+    """Test slicing with steps."""
+    data = [[1, 2, 3, 4], 
+            [5, 6, 7, 8], 
+            [9, 10, 11, 12]]
+    A = Matrix(matrix=data)
+    
+    # Slice rows with step 2
+    sub = A[::2, :]
+    assert sub.M == [[1, 2, 3, 4], [9, 10, 11, 12]]
+    
+    # Slice cols with step 2
+    sub = A[:, ::2]
+    assert sub.M == [[1, 3], [5, 7], [9, 11]]
+
+
+def test_setitem_errors():
+    """Test setitem error conditions."""
+    A = Matrix(2, 2)
+    
+    # 1. Invalid index type
+    with pytest.raises(TypeError, match="Invalid index type"):
+        A["key"] = 0
+        
+    # 2. Slice assignment errors
+    # Assigning scalar to slice (requires Matrix)
+    with pytest.raises(TypeError, match="Slice assignment requires a Matrix"):
+        A[:, :] = 5
+        
+    # Shape mismatch in slice assignment
+    with pytest.raises(ShapeError, match="Slice shape mismatch"):
+        A[:, :] = Matrix(3, 3) # Target is 2x2, Source is 3x3
+        
+    # 3. Single element assignment errors
+    # Assigning non-numeric
+    with pytest.raises(TypeError, match="Single element assignment requires a number"):
+        A[0, 0] = "string"
+        
+    # 4. Row assignment errors
+    # Assigning non-list/tuple
+    with pytest.raises(TypeError, match="Row assignment requires a list or tuple"):
+        A[0] = 5
+    
+    # Row length mismatch
+    with pytest.raises(ShapeError, match="Row length mismatch"):
+        A[0] = [1, 2, 3] # Matrix is 2x2
+
+
+def test_arithmetic_errors():
+    """Test arithmetic operations with invalid types/shapes."""
+    A = Matrix(2, 2)
+    B = Matrix(3, 3)
+    
+    with pytest.raises(ShapeError, match="Matrix size mismatch for addition"):
+        _ = A + B
+        
+    with pytest.raises(ShapeError, match="Matrix size mismatch for subtraction"):
+        _ = A - B
+        
+    with pytest.raises(TypeError, match="Matrix can only be multiplied by a scalar"):
+        _ = A * "string"
+
+
+def test_copy_independence():
+    """Test that copy creates a deep copy of the data."""
+    A = Matrix(matrix=[[1, 2], [3, 4]])
+    B = A.copy()
+    
+    # Modify B, A should remain unchanged
+    B[0, 0] = 99
+    assert A[0, 0] == 1
+    assert B[0, 0] == 99.0
+
+
+def test_empty_matrix():
+    """Test behavior with zero dimensions."""
+    # 0x0 Matrix
+    E = Matrix(0, 0)
+    assert E.shape() == (0, 0)
+    assert str(E) == "" # Should be empty string or harmless
+    
+    # Nx0 Matrix
+    E2 = Matrix(2, 0)
+    assert E2.shape() == (2, 0)
+    assert E2.M == [[], []]
+    
+    # 0xN Matrix
+    E3 = Matrix(0, 2)
+    assert E3.shape() == (0, 2)
+    assert E3.M == []
+

@@ -1,8 +1,20 @@
+from typing import List, Optional, Tuple, Union, overload
+
 from .exceptions import ShapeError
+
+type TinyMatrixNumeric = Union[int, float]
+type TinyMatrixData = List[List[TinyMatrixNumeric]]
+type TinyMatrixIndex = Union[int, slice]
+type TinyMatrixIndexPair = Tuple[TinyMatrixIndex, TinyMatrixIndex]
 
 
 class Matrix:
-    def __init__(self, m=None, n=None, matrix=None):
+    def __init__(
+        self,
+        m: Optional[int] = None,
+        n: Optional[int] = None,
+        matrix: Optional[TinyMatrixData] = None,
+    ) -> None:
         if matrix is not None:
             if not all(len(row) == len(matrix[0]) for row in matrix):
                 raise ShapeError("All rows must have equal length")
@@ -18,11 +30,11 @@ class Matrix:
             self.M = [[0.0 for _ in range(n)] for _ in range(m)]
 
     @staticmethod
-    def zeroes(m, n):
+    def zeroes(m: int, n: int) -> "Matrix":
         return Matrix(m, n)
 
     @staticmethod
-    def ones(m, n):
+    def ones(m: int, n: int) -> "Matrix":
         mat = Matrix(m, n)
         for row in range(m):
             for col in range(n):
@@ -31,20 +43,37 @@ class Matrix:
         return mat
 
     @staticmethod
-    def identity(n):
+    def identity(n: int) -> "Matrix":
         mat = Matrix(n, n)
         for row in range(n):
             mat[row, row] = 1.0
 
         return mat
 
-    def shape(self):
+    def shape(self) -> Tuple[int, int]:
         return self.m, self.n
 
-    def copy(self):
+    def copy(self) -> "Matrix":
         return Matrix(matrix=[row[:] for row in self.M])
 
-    def __getitem__(self, idx):
+    @overload
+    def __getitem__(self, idx: int) -> "Matrix": ...
+
+    @overload
+    def __getitem__(self, idx: Tuple[int, int]) -> TinyMatrixNumeric: ...
+
+    @overload
+    def __getitem__(self, idx: Tuple[int, slice]) -> "Matrix": ...
+
+    @overload
+    def __getitem__(self, idx: Tuple[slice, int]) -> "Matrix": ...
+
+    @overload
+    def __getitem__(self, idx: Tuple[slice, slice]) -> "Matrix": ...
+
+    def __getitem__(
+        self, idx: Union[int, TinyMatrixIndexPair]
+    ) -> Union[TinyMatrixNumeric, "Matrix"]:
         if isinstance(idx, tuple):
             row, col = idx
 
@@ -62,7 +91,16 @@ class Matrix:
         else:
             raise TypeError("Invalid index type")
 
-    def __setitem__(self, idx, value):
+    def __setitem__(
+        self,
+        idx: Union[int, TinyMatrixIndexPair],
+        value: Union[
+            TinyMatrixNumeric,
+            "Matrix",
+            List[TinyMatrixNumeric],
+            Tuple[TinyMatrixNumeric, ...],
+        ],
+    ) -> None:
         if isinstance(idx, tuple):
             row, col = idx
 
@@ -98,15 +136,15 @@ class Matrix:
         else:
             raise TypeError("Invalid index type")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "\n".join(
             "[" + " ".join(f"{x:.2f}" for x in row) + "]" for row in self.M
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__repr__()
 
-    def __add__(self, other):
+    def __add__(self, other: "Matrix") -> "Matrix":
         if self.shape() != other.shape():
             raise ShapeError("Matrix size mismatch for addition")
 
@@ -117,7 +155,7 @@ class Matrix:
 
         return result
 
-    def __sub__(self, other):
+    def __sub__(self, other: "Matrix") -> "Matrix":
         if self.shape() != other.shape():
             raise ShapeError("Matrix size mismatch for subtraction")
 
@@ -128,7 +166,7 @@ class Matrix:
 
         return result
 
-    def __mul__(self, scalar):
+    def __mul__(self, scalar: TinyMatrixNumeric) -> "Matrix":
         if not isinstance(scalar, (int, float)):
             raise TypeError("Matrix can only be multiplied by a scalar")
 
@@ -139,13 +177,13 @@ class Matrix:
 
         return result
 
-    def __rmul__(self, scalar):
+    def __rmul__(self, scalar: TinyMatrixNumeric) -> "Matrix":
         return self.__mul__(scalar)
 
-    def __neg__(self):
+    def __neg__(self) -> "Matrix":
         return self * -1
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Matrix):
             return False
         if self.shape() != other.shape():
@@ -158,7 +196,7 @@ class Matrix:
 
         return True
 
-    def __matmul__(self, other):
+    def __matmul__(self, other: "Matrix") -> "Matrix":
         if self.n != other.m:
             raise ShapeError(
                 f"Cannot multiply: ({self.m}*{self.n}) @ ({other.m}*{other.n})"
@@ -174,7 +212,7 @@ class Matrix:
         return result
 
     @property
-    def T(self):
+    def T(self) -> "Matrix":
         result = Matrix(self.n, self.m)
         for row in range(self.m):
             for col in range(self.n):
