@@ -68,7 +68,7 @@ Licensed under the MIT License. See the LICENSE file for full text.
 
 ### Phase 1: Foundation & Quality
 * [x] Add full type hints for all public APIs
-* [ ] Add optional `dtype` support (float/int/Decimal/complex)
+* [x] Add optional `dtype` support (float/int/Decimal/complex)
 * [ ] Add stricter input and type validation
 * [ ] Improve slice/index edge-case tests
 * [ ] Add GitHub Actions for lint, test, and build
