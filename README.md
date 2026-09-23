@@ -245,6 +245,33 @@ print(tracer.format_summary_table())
 tracer.export_chrome_trace("trace.json")
 
 ---
+## ⚡ Benchmarking & Tracing
+
+TinyMatrix includes benchmarking and timeline tracing tools in the `benchmarks/` directory to measure throughput, memory consumption, and execution bottlenecks:
+
+### 1. Speed Benchmarks Across Matrix Sizes
+Run standard operations (`@`, blocked, Strassen, `inv`, `det`, `lu`, `qr`, `cholesky`, `svd`) across $10 \times 10$, $50 \times 50$, and $100 \times 100$ matrices:
+
+```bash
+uv run python benchmarks/benchmark.py
+```
+
+### 2. Timeline Tracing & Perfetto Export
+Record wall time, CPU time, and peak memory allocations per operation, and export an interactive timeline trace:
+
+```bash
+uv run python benchmarks/trace.py --size 30,60 --save-trace trace.json
+```
+Open [https://ui.perfetto.dev/](https://ui.perfetto.dev/) or `chrome://tracing` in a browser and drop `trace.json` to visually inspect flame charts and execution spans.
+
+### 3. Hotspot Analysis with cProfile
+Profile a specific operation's call tree and identify top bottlenecks:
+
+```bash
+uv run python benchmarks/trace.py --profile svd --size 50
+```
+
+---
 
 ## 📖 Practical Examples
 
@@ -253,9 +280,6 @@ Executable standalone scripts are provided in the [`examples/`](examples/) direc
 - [`examples/linear_regression.py`](examples/linear_regression.py): Ordinary least-squares line fitting.
 - [`examples/pagerank.py`](examples/pagerank.py): Markov transition matrix and power iteration PageRank algorithm.
 - [`examples/kalman_filter.py`](examples/kalman_filter.py): 1D tracking Kalman filter with state updates and covariance propagation.
-- [`benchmarks/trace.py`](benchmarks/trace.py): Timeline tracing and memory profiling CLI tool.
-- [`benchmarks/benchmark.py`](benchmarks/benchmark.py): Performance profiling script measuring speed across matrix sizes.
----
 
 ## 📚 Documentation & Guides
 
@@ -277,10 +301,15 @@ uv run pre-commit install
 # Run test suite with full coverage
 uv run pytest --cov=tinymatrix --cov-report=term-missing
 
+# Run benchmarks
+uv run python benchmarks/benchmark.py
+
+# Run performance tracing
+uv run python benchmarks/trace.py
+
 # Run linter and formatter
 uv run ruff check .
 uv run ruff format --check .
-
 # Build Sphinx documentation
 uv run sphinx-build -b html docs docs/_build/html
 ```
