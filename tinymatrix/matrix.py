@@ -12,7 +12,7 @@ from typing import (
     overload,
 )
 
-from .exceptions import ShapeError
+from .exceptions import ShapeError, SingularMatrixError
 from .types import DTYPES, TinyMatrixData, TinyMatrixIndexPair, TinyMatrixNumeric
 
 
@@ -293,6 +293,218 @@ class Matrix:
         if self.m == 0:
             return self.cast(0)
         return self.cast(sum(self.diagonal()))
+
+    # =========================================================================
+    # Linear Algebra Core: Determinant, Inverse, Rank, Norm, Kronecker
+    # =========================================================================
+
+    def det(self) -> TinyMatrixNumeric:
+        """Compute the determinant of a square matrix."""
+        if self.m != self.n:
+            raise ShapeError("Determinant is only defined for square matrices")
+
+        n = self.m
+        if n == 0:
+            return self.cast(1)
+        if n == 1:
+            return self.M[0][0]
+        if n == 2:
+            return self.cast(self.M[0][0] * self.M[1][1] - self.M[0][1] * self.M[1][0])
+
+        # Gaussian elimination with partial pivoting
+        A = [row[:] for row in self.M]
+        sign = 1
+        tol = 1e-14
+
+        for k in range(n):
+            pivot_row = k
+            max_val = abs(A[k][k])
+            for i in range(k + 1, n):
+                val = abs(A[i][k])
+                if val > max_val:
+                    max_val = val
+                    pivot_row = i
+
+            if max_val < tol:
+                return self.cast(0)
+
+            if pivot_row != k:
+                A[k], A[pivot_row] = A[pivot_row], A[k]
+                sign = -sign
+
+            pivot = A[k][k]
+            for i in range(k + 1, n):
+                factor = A[i][k] / pivot
+                for j in range(k + 1, n):
+                    A[i][j] -= factor * A[k][j]
+
+        prod = sign
+        for k in range(n):
+            prod *= A[k][k]
+
+        if self.dtype == "int":
+            return self.cast(round(float(prod)))
+        return self.cast(prod)
+
+    def inv(self) -> "Matrix":
+        """Compute the multiplicative inverse of a square matrix using Gauss-Jordan elimination."""
+        if self.m != self.n:
+            raise ShapeError("Matrix inverse is only defined for square matrices")
+
+        n = self.m
+        if n == 0:
+            return Matrix(0, 0, dtype=self.dtype)
+
+        aug = []
+        for i in range(n):
+            identity_row = [self.cast(1) if i == j else self.cast(0) for j in range(n)]
+            aug.append([row_val for row_val in self.M[i]] + identity_row)
+
+        tol = 1e-14
+        for k in range(n):
+            pivot_row = k
+            max_val = abs(aug[k][k])
+            for i in range(k + 1, n):
+                val = abs(aug[i][k])
+                if val > max_val:
+                    max_val = val
+                    pivot_row = i
+
+            if max_val < tol:
+                raise SingularMatrixError("Matrix is singular and cannot be inverted")
+
+            if pivot_row != k:
+                aug[k], aug[pivot_row] = aug[pivot_row], aug[k]
+
+            pivot = aug[k][k]
+            for j in range(k, 2 * n):
+                aug[k][j] /= pivot
+
+            for i in range(n):
+                if i != k:
+                    factor = aug[i][k]
+                    if abs(factor) > 0:
+                        for j in range(k, 2 * n):
+                            aug[i][j] -= factor * aug[k][j]
+
+        inv_data = [[self.cast(aug[i][j]) for j in range(n, 2 * n)] for i in range(n)]
+        return Matrix(matrix=inv_data, dtype=self.dtype)
+
+    def rank(self, tol: Optional[float] = None) -> int:
+        """Compute matrix rank using Gaussian elimination with partial pivoting."""
+        if self.m == 0 or self.n == 0:
+            return 0
+
+        A = [
+            [float(abs(x)) if self.dtype == "complex" else float(x) for x in row]
+            for row in self.M
+        ]
+
+        if tol is None:
+            max_val = max(abs(x) for row in A for x in row) if A else 0.0
+            tol = max(self.m, self.n) * 1e-15 * max_val if max_val > 0 else 1e-14
+
+        lead = 0
+        r = 0
+        while r < self.m and lead < self.n:
+            pivot_row = r
+            max_val = abs(A[r][lead])
+            for i in range(r + 1, self.m):
+                val = abs(A[i][lead])
+                if val > max_val:
+                    max_val = val
+                    pivot_row = i
+
+            if max_val <= tol:
+                lead += 1
+                continue
+
+            if pivot_row != r:
+                A[r], A[pivot_row] = A[pivot_row], A[r]
+
+            pivot = A[r][lead]
+            for i in range(r + 1, self.m):
+                factor = A[i][lead] / pivot
+                for j in range(lead, self.n):
+                    A[i][j] -= factor * A[r][j]
+
+            lead += 1
+            r += 1
+
+        rank_count = 0
+        for i in range(self.m):
+            if any(abs(x) > tol for x in A[i]):
+                rank_count += 1
+        return rank_count
+
+    def norm(self, ord: Union[int, float, str] = "fro") -> float:
+        """Compute the matrix or vector norm."""
+        if self.m == 0 or self.n == 0:
+            return 0.0
+
+        if ord == "fro":
+            return math.sqrt(sum(abs(x) ** 2 for row in self.M for x in row))
+        elif ord == 1:
+            return float(
+                max(
+                    sum(abs(self.M[r][c]) for r in range(self.m)) for c in range(self.n)
+                )
+            )
+        elif ord in (float("inf"), "inf"):
+            return float(max(sum(abs(x) for x in row) for row in self.M))
+        elif ord == -1:
+            return float(
+                min(
+                    sum(abs(self.M[r][c]) for r in range(self.m)) for c in range(self.n)
+                )
+            )
+        elif ord in (float("-inf"), "-inf"):
+            return float(min(sum(abs(x) for x in row) for row in self.M))
+        elif ord == 2:
+            if self.m == 1 or self.n == 1:
+                return math.sqrt(sum(abs(x) ** 2 for row in self.M for x in row))
+
+            AtA = self.T @ self
+            v = [1.0] * AtA.n
+            for _ in range(50):
+                w = [
+                    sum(float(AtA.M[i][j]) * v[j] for j in range(AtA.n))
+                    for i in range(AtA.n)
+                ]
+                norm_w = math.sqrt(sum(x**2 for x in w))
+                if norm_w < 1e-15:
+                    return 0.0
+                v = [x / norm_w for x in w]
+            w = [
+                sum(float(AtA.M[i][j]) * v[j] for j in range(AtA.n))
+                for i in range(AtA.n)
+            ]
+            lambda_max = max(0.0, sum(v[i] * w[i] for i in range(AtA.n)))
+            return math.sqrt(lambda_max)
+        else:
+            raise ValueError(f"Invalid norm order: {ord}")
+
+    def kron(self, other: "Matrix") -> "Matrix":
+        """Compute the Kronecker product of two matrices."""
+        if not isinstance(other, Matrix):
+            raise TypeError("Kronecker product requires another Matrix")
+
+        out_m = self.m * other.m
+        out_n = self.n * other.n
+        result = Matrix(out_m, out_n, dtype=self.dtype)
+
+        for r1 in range(self.m):
+            a_val = self.M[r1]
+            for c1 in range(self.n):
+                val = a_val[c1]
+                for r2 in range(other.m):
+                    b_row = other.M[r2]
+                    for c2 in range(other.n):
+                        result.M[r1 * other.m + r2][c1 * other.n + c2] = self.cast(
+                            val * b_row[c2]
+                        )
+
+        return result
 
     # =========================================================================
     # Transformations: Reshape, Squeeze, Expand Dims

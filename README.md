@@ -49,13 +49,18 @@ r0 = A.row(0)
 c1 = A.col(1)
 diag = A.diagonal()
 tr = A.trace()
+# Linear algebra core
+d = A.det()  # or det(A)
+inv_A = A.inv()  # or inv(A)
+rk = A.rank()  # or rank(A)
+f_norm = A.norm("fro")  # or norm(A)
+K = A.kron(B)  # or kron(A, B)
 
 # Reductions & math
 total = A.sum()
 col_means = A.mean(axis=0)
 row_maxs = A.max(axis=1)
 scaled = A.apply(lambda x: x ** 2)
-
 # Indexing / slicing
 val = A[0, 1]
 sub = A[0:1, :]
@@ -116,14 +121,13 @@ Licensed under the MIT License. See the LICENSE file for full text.
 * [x] Add `.diagonal()`, `.trace()` operations
 
 ### Phase 3: Linear Algebra Core
-* [ ] Implement determinant calculation
-* [ ] Implement matrix inverse
-* [ ] Implement matrix rank
-* [ ] Implement matrix norm (Frobenius, spectral, etc.)
+* [x] Implement determinant calculation
+* [x] Implement matrix inverse
+* [x] Implement matrix rank
+* [x] Implement matrix norm (Frobenius, spectral, etc.)
 * [x] Add matrix power (`A ** n`)
-* [ ] Add Kronecker product
+* [x] Add Kronecker product
 * [x] Add Hadamard (element-wise) product operator
-
 ### Phase 4: Decompositions & Solvers
 * [ ] Add LU decomposition
 * [ ] Add QR decomposition

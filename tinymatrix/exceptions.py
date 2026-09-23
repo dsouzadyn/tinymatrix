@@ -4,3 +4,7 @@ class MatrixError(Exception):
 
 class ShapeError(MatrixError):
     pass
+
+
+class SingularMatrixError(MatrixError):
+    pass
