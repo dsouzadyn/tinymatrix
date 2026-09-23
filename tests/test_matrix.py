@@ -138,35 +138,35 @@ def test_zeroes_with_dtype():
 
 def test_ones():
     """Test ones constructor."""
-    O = Matrix.ones(2, 3)
-    assert O.shape() == (2, 3)
-    assert O.M == [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
+    mat_ones = Matrix.ones(2, 3)
+    assert mat_ones.shape() == (2, 3)
+    assert mat_ones.M == [[1.0, 1.0, 1.0], [1.0, 1.0, 1.0]]
 
 
 def test_ones_with_dtype():
     """Test ones with different dtypes."""
-    O = Matrix.ones(2, 2, dtype="decimal")
-    assert all(isinstance(x, Decimal) for row in O.M for x in row)
-    assert all(x == Decimal(1) for row in O.M for x in row)
+    mat_ones = Matrix.ones(2, 2, dtype="decimal")
+    assert all(isinstance(x, Decimal) for row in mat_ones.M for x in row)
+    assert all(x == Decimal(1) for row in mat_ones.M for x in row)
 
 
 def test_identity():
     """Test identity matrix constructor."""
-    I = Matrix.identity(3)
+    ident = Matrix.identity(3)
     expected = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    assert I.M == expected
+    assert ident.M == expected
 
 
 def test_identity_1x1():
     """Test 1x1 identity matrix."""
-    I = Matrix.identity(1)
-    assert I.M == [[1.0]]
+    ident = Matrix.identity(1)
+    assert ident.M == [[1.0]]
 
 
 def test_identity_with_dtype():
     """Test identity with different dtypes."""
-    I = Matrix.identity(2, dtype="int")
-    assert I.M == [[1, 0], [0, 1]]
+    ident = Matrix.identity(2, dtype="int")
+    assert ident.M == [[1, 0], [0, 1]]
 
 
 # =============================================================================
@@ -426,9 +426,9 @@ def test_matmul():
 def test_matmul_identity():
     """Test matrix multiplication with identity."""
     A = Matrix(matrix=[[1, 2], [3, 4]])
-    I = Matrix.identity(2)
-    B = A @ I
-    C = I @ A
+    ident = Matrix.identity(2)
+    B = A @ ident
+    C = ident @ A
     assert B == A
     assert C == A
 
@@ -531,7 +531,7 @@ def test_eq_against_non_matrix():
     assert A != "string"
     assert A != 123
     assert A != [1, 2, 3]
-    assert A != None
+    assert A != None  # noqa: E711
 
 
 def test_eq_different_shapes():

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: TinyMatrix Discussions / Questions
+    url: https://github.com/dsouzadyn/tinymatrix/discussions
+    about: Ask questions or discuss ideas with the community

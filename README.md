@@ -52,14 +52,27 @@ O = Matrix.ones(2, 2)
 
 Refer to `tests/test_matrix.py` for additional examples and expected behavior.
 
-## Running tests
+## Development
 
-From the project root run:
+Install development dependencies and setup pre-commit hooks:
 
 ```bash
-pytest -q
+uv sync
+uv run pre-commit install
 ```
 
+Run tests:
+
+```bash
+uv run pytest
+```
+
+Run linter and formatter:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+```
 ## License
 
 Licensed under the MIT License. See the LICENSE file for full text.
@@ -71,7 +84,7 @@ Licensed under the MIT License. See the LICENSE file for full text.
 * [x] Add optional `dtype` support (float/int/Decimal/complex)
 * [ ] Add stricter input and type validation
 * [ ] Improve slice/index edge-case tests
-* [ ] Add GitHub Actions for lint, test, and build
+* [x] Add GitHub Actions for lint, test, and build
 * [ ] Add code coverage tooling + badge
 
 ### Phase 2: Core Matrix Operations

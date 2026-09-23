@@ -1,0 +1,30 @@
+# <type>(<scope>): <subject> (max 50-72 chars)
+# |<----  Using a Maximum Of 50-72 Characters  ---->|
+
+# Explain why this change is being made and what problem it solves.
+# Include technical details, design decisions, and context.
+# Wrap lines at ~72 characters.
+
+# -----------------------------------------------------------------
+# Commit Type Rules:
+#   feat:     A new feature or public API addition
+#   fix:      A bug fix
+#   docs:     Documentation only changes
+#   style:    Formatting, missing semicolons, no code change
+#   refactor: Refactoring code without changing behavior
+#   perf:     Code change that improves performance
+#   test:     Adding or updating tests
+#   build:    Changes to build system or dependencies
+#   ci:       CI configuration and scripts
+#   chore:    Maintenance tasks, tooling updates
+#
+# Scope Examples:
+#   matrix, types, indexing, arithmetic, linalg, deps, ci
+#
+# Breaking Changes:
+#   BREAKING CHANGE: <description of breaking change>
+#
+# Issue References:
+#   Closes #<issue-number>
+#   Refs #<issue-number>
+# -----------------------------------------------------------------
