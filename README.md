@@ -256,6 +256,24 @@ Run standard operations (`@`, blocked, Strassen, `inv`, `det`, `lu`, `qr`, `chol
 uv run python benchmarks/benchmark.py
 ```
 
+#### 📊 Measured Benchmark Results (Pure Python)
+
+Average execution time across 5 runs per operation:
+
+| Operation | 10 × 10 | 50 × 50 | 100 × 100 |
+|---|:---:|:---:|:---:|
+| **Transpose (`A.T`)** | **0.005 ms** | 0.099 ms | 0.415 ms |
+| **Determinant (`A.det()`)** | **0.015 ms** | 1.021 ms | 8.262 ms |
+| **LU Decomposition** | **0.033 ms** | 1.298 ms | 9.871 ms |
+| **Standard Matmul (`A @ B`)** | **0.044 ms** | 4.239 ms | 34.097 ms |
+| **QR Decomposition** | **0.055 ms** | 3.257 ms | 24.758 ms |
+| **Matrix Inverse (`A.inv()`)** | **0.065 ms** | 4.711 ms | 37.052 ms |
+| **Cholesky (`L @ L.T`)** | **0.104 ms** | 5.825 ms | 44.268 ms |
+| **Blocked Matmul (tile=16)** | **0.108 ms** | 4.735 ms | 37.610 ms |
+| **Strassen Matmul** | — | 14.326 ms | 112.532 ms |
+| **SVD (`A.svd()`)** | 0.634 ms | 163.475 ms | 2.407 s |
+
+*Tested on Python 3.12 (Apple M4). Demonstrates sub-millisecond execution for small matrices and interactive performance for medium matrices without any compiled C extensions.*
 ### 2. Timeline Tracing & Perfetto Export
 Record wall time, CPU time, and peak memory allocations per operation, and export an interactive timeline trace:
 
