@@ -31,24 +31,41 @@ A = Matrix(matrix=[[1, 2], [3, 4]])
 B = Matrix(matrix=[[5, 6], [7, 8]])
 C = A + B  # element-wise addition
 
-# Scalar multiply
+# Scalar arithmetic & division
 D = A * 2
+div = A / 2
 
-# Matrix multiplication
+# Element-wise multiplication (Hadamard) & broadcasting
+H = A * B
+broadcast_sum = A + Matrix(matrix=[[10, 20]])  # (2x2) + (1x2)
+
+# Matrix multiplication & power
 E = A @ Matrix(matrix=[[1], [2]])
+P = A ** 3
 
-# Transpose
+# Transpose & helpers
 T = A.T
+r0 = A.row(0)
+c1 = A.col(1)
+diag = A.diagonal()
+tr = A.trace()
+
+# Reductions & math
+total = A.sum()
+col_means = A.mean(axis=0)
+row_maxs = A.max(axis=1)
+scaled = A.apply(lambda x: x ** 2)
 
 # Indexing / slicing
 val = A[0, 1]
 sub = A[0:1, :]
 
-# Static constructors
+# Constructors
 I = Matrix.identity(3)
 Z = Matrix.zeroes(2, 3)
 O = Matrix.ones(2, 2)
-```
+R = Matrix.random(2, 3, low=0.0, high=1.0)
+N = Matrix.normal(3, 3, mean=0.0, std=1.0)
 
 Refer to `tests/test_matrix.py` for additional examples and expected behavior.
 
@@ -82,30 +99,30 @@ Licensed under the MIT License. See the LICENSE file for full text.
 ### Phase 1: Foundation & Quality
 * [x] Add full type hints for all public APIs
 * [x] Add optional `dtype` support (float/int/Decimal/complex)
-* [ ] Add stricter input and type validation
-* [ ] Improve slice/index edge-case tests
+* [x] Add stricter input and type validation
+* [x] Improve slice/index edge-case tests
 * [x] Add GitHub Actions for lint, test, and build
-* [ ] Add code coverage tooling + badge
+* [x] Add code coverage tooling + badge
 
 ### Phase 2: Core Matrix Operations
-* [ ] Add `.row(i)`, `.col(j)`, `.flatten()` helpers
-* [ ] Add `.apply(func)` for element-wise operations
-* [ ] Add broadcasting support (1×N and M×1 vectors)
-* [ ] Add random matrix constructors (uniform, normal)
-* [ ] Improve printing for large matrices (ellipsis, alignment)
-* [ ] Add `.reshape()`, `.squeeze()`, `.expand_dims()`
-* [ ] Add element-wise functions (abs, sqrt, exp, log, sin, cos, etc.)
-* [ ] Add reduction operations (sum, mean, std, min, max) with axis support
-* [ ] Add `.diagonal()`, `.trace()` operations
+* [x] Add `.row(i)`, `.col(j)`, `.flatten()` helpers
+* [x] Add `.apply(func)` for element-wise operations
+* [x] Add broadcasting support (1×N and M×1 vectors)
+* [x] Add random matrix constructors (uniform, normal)
+* [x] Improve printing for large matrices (ellipsis, alignment)
+* [x] Add `.reshape()`, `.squeeze()`, `.expand_dims()`
+* [x] Add element-wise functions (abs, sqrt, exp, log, sin, cos, etc.)
+* [x] Add reduction operations (sum, mean, std, min, max) with axis support
+* [x] Add `.diagonal()`, `.trace()` operations
 
 ### Phase 3: Linear Algebra Core
 * [ ] Implement determinant calculation
 * [ ] Implement matrix inverse
 * [ ] Implement matrix rank
 * [ ] Implement matrix norm (Frobenius, spectral, etc.)
-* [ ] Add matrix power (`A ** n`)
+* [x] Add matrix power (`A ** n`)
 * [ ] Add Kronecker product
-* [ ] Add Hadamard (element-wise) product operator
+* [x] Add Hadamard (element-wise) product operator
 
 ### Phase 4: Decompositions & Solvers
 * [ ] Add LU decomposition

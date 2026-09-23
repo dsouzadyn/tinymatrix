@@ -23,6 +23,7 @@ classifiers = [
 dev = [
     "pre-commit>=4.0.0",
     "pytest>=9.0.2",
+    "pytest-cov>=6.0.0",
     "rich>=14.0.0",
     "ruff>=0.12.1",
 ]
