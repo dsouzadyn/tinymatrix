@@ -1,9 +1,19 @@
+<div align="center">
 
-# TinyMatrix
+<img src="docs/logo.svg" alt="TinyMatrix Logo" width="520"/>
 
-TinyMatrix is a minimal, dependency-free Python library that provides a small Matrix type with basic linear-algebra-like operations: construction, element-wise arithmetic, matrix multiplication, transpose, indexing/slicing, and a few static constructors (identity, zeroes, ones).
+<p><strong>A minimal, zero-dependency Python library for matrix manipulation, linear algebra, decompositions, solvers, and sparse computation.</strong></p>
 
-Designed for learning and small scripts where a tiny and readable matrix helper is preferred over a large dependency.
+[![CI](https://github.com/dsouzadyn/tinymatrix/actions/workflows/ci.yml/badge.svg)](https://github.com/dsouzadyn/tinymatrix/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/dsouzadyn/tinymatrix)
+
+</div>
+
+---
+
+TinyMatrix is designed for learning, embedded systems, serverless functions, and small scripts where a tiny, readable, dependency-free matrix helper is preferred over a multi-megabyte binary dependency like NumPy.
 
 ## Install
 
@@ -56,14 +66,43 @@ rk = A.rank()  # or rank(A)
 f_norm = A.norm("fro")  # or norm(A)
 K = A.kron(B)  # or kron(A, B)
 
+# Decompositions & Solvers
+P, L, U = A.lu()
+Q, R = A.qr()
+evals, evecs = A.eig()
+U_svd, s_vals, Vt = A.svd()
+x = A.solve([5, 5])  # Ax = b
+x_lsq, res = A.lstsq([5, 5])
+
+# Advanced features: condition, pseudo-inverse, sparse, stacking
+kappa = A.cond()  # Condition number
+A_pinv = A.pinv()  # Moore-Penrose pseudo-inverse
+csr = A.to_sparse() if hasattr(A, 'to_sparse') else None
+
+# Stacking & Block concatenation
+from tinymatrix import vstack, hstack, block
+V = vstack([A, B])
+H = hstack([A, B])
+BLK = block([[A, B], [B, A]])
+
+# Immutability (frozen matrix)
+A_frozen = A.freeze()
+
+# Performance: Blocked & Strassen matmul, Lazy evaluation
+C_blocked = A.matmul_blocked(B, block_size=16)
+lazy_expr = (A.lazy() + B.lazy()) @ A.lazy()
+C_lazy = lazy_expr.evaluate()
+
 # Reductions & math
 total = A.sum()
 col_means = A.mean(axis=0)
 row_maxs = A.max(axis=1)
 scaled = A.apply(lambda x: x ** 2)
-# Indexing / slicing
+
+# Indexing / slicing / boolean masks
 val = A[0, 1]
 sub = A[0:1, :]
+gt_elements = A[A > 2]
 
 # Constructors
 I = Matrix.identity(3)
@@ -71,7 +110,6 @@ Z = Matrix.zeroes(2, 3)
 O = Matrix.ones(2, 2)
 R = Matrix.random(2, 3, low=0.0, high=1.0)
 N = Matrix.normal(3, 3, mean=0.0, std=1.0)
-
 Refer to `tests/test_matrix.py` for additional examples and expected behavior.
 
 ## Development
@@ -155,14 +193,14 @@ Licensed under the MIT License. See the LICENSE file for full text.
 * [x] Add pseudo-inverse (Moore-Penrose)
 
 ### Phase 7: Documentation & Polish
-* [ ] Expand README with comprehensive examples
-* [ ] Add Sphinx docs site
-* [ ] Add example notebooks (Jupyter)
-* [ ] Add comparison guide: TinyMatrix vs NumPy
-* [ ] Add migration guide for NumPy users
-* [ ] Complete PyPI metadata
-* [ ] Add mathematical notation in docstrings
-* [ ] Create logo and branding
+* [x] Expand README with comprehensive examples
+* [x] Add Sphinx docs site
+* [x] Add example notebooks (Jupyter / scripts)
+* [x] Add comparison guide: TinyMatrix vs NumPy
+* [x] Add migration guide for NumPy users
+* [x] Complete PyPI metadata
+* [x] Add mathematical notation in docstrings
+* [x] Create logo and branding
 
 ### Stretch Goals
 * [ ] Add matrix calculus operations (gradient, Jacobian, Hessian)

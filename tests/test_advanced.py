@@ -29,7 +29,9 @@ def _assert_matrices_close(A: Matrix, B: Matrix, tol: float = 1e-6):
 
 def test_csr_basic():
     dense = Matrix(matrix=[[1, 0, 2], [0, 0, 3], [4, 5, 0]])
-    csr = CSRMatrix.from_dense(dense)
+    csr = dense.to_sparse("csr")
+    csc = dense.to_sparse("csc")
+    assert isinstance(csc, CSCMatrix)
 
     assert csr.shape() == (3, 3)
     assert csr.nnz() == 5

@@ -1,7 +1,7 @@
 [project]
 name = "tinymatrix"
-version = "0.1.1"
-description = "A tiny, dependency-free Matrix helper library with basic linear-algebra-like operations (construction, arithmetic, matmul, transpose, slicing)."
+version = "0.2.0"
+description = "A lightweight, zero-dependency Python library for matrix manipulation, linear algebra, decompositions, solvers, and sparse computation."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []
@@ -12,20 +12,50 @@ authors = [
 
 license = "MIT"
 
-keywords = ["matrix", "linear-algebra", "tiny", "education"]
+keywords = [
+    "matrix",
+    "linear-algebra",
+    "decompositions",
+    "lu",
+    "qr",
+    "cholesky",
+    "svd",
+    "eigenvalues",
+    "sparse-matrix",
+    "solver",
+    "zero-dependency",
+    "education",
+]
 
 classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
+    "Typing :: Typed",
 ]
+
+[project.urls]
+Homepage = "https://github.com/dsouzadyn/tinymatrix"
+Repository = "https://github.com/dsouzadyn/tinymatrix"
+Issues = "https://github.com/dsouzadyn/tinymatrix/issues"
+Documentation = "https://github.com/dsouzadyn/tinymatrix#readme"
 
 [dependency-groups]
 dev = [
+    "furo>=2024.8.6",
+    "myst-parser>=3.0.0",
     "pre-commit>=4.0.0",
     "pytest>=9.0.2",
     "pytest-cov>=6.0.0",
     "rich>=14.0.0",
     "ruff>=0.12.1",
+    "sphinx>=7.4.0",
 ]
 
 [tool.pytest.ini_options]

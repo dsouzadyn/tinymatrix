@@ -621,6 +621,16 @@ class Matrix:
         Ut = U.T
         return V @ S_inv @ Ut
 
+    def to_sparse(self, format: str = "csr"):
+        """Convert matrix to sparse format (csr or csc)."""
+        if format.lower() == "csc":
+            from .sparse import CSCMatrix
+
+            return CSCMatrix.from_dense(self)
+        from .sparse import CSRMatrix
+
+        return CSRMatrix.from_dense(self)
+
     def __gt__(self, other: Union["Matrix", TinyMatrixNumeric]) -> "Matrix":
         return self._elementwise_op(other, lambda a, b: 1 if a > b else 0, "greater")
 
