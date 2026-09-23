@@ -23,12 +23,14 @@ class Matrix:
         n: Optional[int] = None,
         matrix: Optional[TinyMatrixData] = None,
         dtype: str = "float",
+        frozen: bool = False,
     ) -> None:
         if dtype not in DTYPES:
             raise ValueError(f"Unsupported dtype: {dtype}")
 
         self.dtype = dtype
         self.cast = DTYPES[dtype]
+        self._frozen = frozen
 
         if matrix is not None:
             if not isinstance(matrix, list):
@@ -157,7 +159,28 @@ class Matrix:
         return [row[:] for row in self.M]
 
     def copy(self) -> "Matrix":
-        return Matrix(matrix=[row[:] for row in self.M], dtype=self.dtype)
+        return Matrix(
+            matrix=[row[:] for row in self.M],
+            dtype=self.dtype,
+            frozen=self._frozen,
+        )
+
+    def freeze(self) -> "Matrix":
+        """Freeze matrix to prevent modifications."""
+        self._frozen = True
+        return self
+
+    def unfreeze(self) -> "Matrix":
+        """Return a mutable copy of this matrix."""
+        return Matrix(
+            matrix=[row[:] for row in self.M],
+            dtype=self.dtype,
+            frozen=False,
+        )
+
+    def is_frozen(self) -> bool:
+        """Return True if matrix is frozen/immutable."""
+        return getattr(self, "_frozen", False)
 
     def astype(self, dtype: str) -> "Matrix":
         if dtype not in DTYPES:
@@ -209,6 +232,17 @@ class Matrix:
             return self.M[row][col]
         elif isinstance(idx, int):
             return Matrix(matrix=[self.M[idx][:]], dtype=self.dtype)
+        elif isinstance(idx, list):
+            # Fancy row indexing
+            return Matrix(matrix=[self.M[r][:] for r in idx], dtype=self.dtype)
+        elif isinstance(idx, Matrix):
+            # Boolean mask indexing
+            return [
+                self.M[r][c]
+                for r in range(self.m)
+                for c in range(self.n)
+                if idx.M[r][c]
+            ]
         else:
             raise TypeError("Invalid index type")
 
@@ -222,6 +256,9 @@ class Matrix:
             Tuple[TinyMatrixNumeric, ...],
         ],
     ) -> None:
+        if getattr(self, "_frozen", False):
+            raise TypeError("Cannot modify frozen/immutable Matrix")
+
         if isinstance(idx, tuple):
             row, col = idx
 
@@ -549,6 +586,56 @@ class Matrix:
         from .decompositions import lstsq
 
         return lstsq(self, b)
+
+    def cond(self, p: Optional[Union[int, float, str]] = None) -> float:
+        """Compute the matrix condition number."""
+        if not self.is_square():
+            raise ShapeError("Condition number is defined for square matrices")
+        if p is None or p == 2:
+            _, S, _ = self.svd()
+            if not S or S[-1] <= 1e-15:
+                return float("inf")
+            return float(S[0] / S[-1])
+        else:
+            norm_A = self.norm(ord=p)
+            try:
+                inv_A = self.inv()
+                norm_inv = inv_A.norm(ord=p)
+                return float(norm_A * norm_inv)
+            except SingularMatrixError:
+                return float("inf")
+
+    def pinv(self, rcond: float = 1e-15) -> "Matrix":
+        """Compute Moore-Penrose pseudo-inverse of matrix using SVD."""
+        if self.m == 0 or self.n == 0:
+            return Matrix(self.n, self.m, dtype=self.dtype)
+        U, S, Vt = self.svd()
+        cutoff = rcond * S[0]
+        k = len(S)
+        S_inv = Matrix.zeroes(k, k, dtype=self.dtype)
+        for i in range(k):
+            if S[i] > cutoff:
+                S_inv.M[i][i] = 1.0 / S[i]
+
+        V = Vt.T
+        Ut = U.T
+        return V @ S_inv @ Ut
+
+    def __gt__(self, other: Union["Matrix", TinyMatrixNumeric]) -> "Matrix":
+        return self._elementwise_op(other, lambda a, b: 1 if a > b else 0, "greater")
+
+    def __ge__(self, other: Union["Matrix", TinyMatrixNumeric]) -> "Matrix":
+        return self._elementwise_op(
+            other, lambda a, b: 1 if a >= b else 0, "greater_equal"
+        )
+
+    def __lt__(self, other: Union["Matrix", TinyMatrixNumeric]) -> "Matrix":
+        return self._elementwise_op(other, lambda a, b: 1 if a < b else 0, "less")
+
+    def __le__(self, other: Union["Matrix", TinyMatrixNumeric]) -> "Matrix":
+        return self._elementwise_op(
+            other, lambda a, b: 1 if a <= b else 0, "less_equal"
+        )
 
     def matmul_blocked(self, other: "Matrix", block_size: int = 32) -> "Matrix":
         """Perform blocked matrix multiplication."""

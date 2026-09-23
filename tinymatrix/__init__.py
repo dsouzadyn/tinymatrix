@@ -1,6 +1,7 @@
 from .exceptions import MatrixError, ShapeError, SingularMatrixError
 from .linalg import (
     cholesky,
+    cond,
     det,
     eig,
     inv,
@@ -9,12 +10,15 @@ from .linalg import (
     lu,
     matrix_power,
     norm,
+    pinv,
     qr,
     rank,
     solve,
     svd,
 )
 from .matrix import Matrix
+from .sparse import CSCMatrix, CSRMatrix
+from .stacking import block, hstack, vstack
 from .types import (
     TinyMatrixData,
     TinyMatrixIndex,
@@ -31,6 +35,11 @@ __all__ = [
     "TinyMatrixIndexPair",
     "TinyMatrixNumeric",
     "TinyMatrixIndex",
+    "CSRMatrix",
+    "CSCMatrix",
+    "vstack",
+    "hstack",
+    "block",
     "det",
     "inv",
     "rank",
@@ -44,4 +53,6 @@ __all__ = [
     "svd",
     "solve",
     "lstsq",
+    "cond",
+    "pinv",
 ]

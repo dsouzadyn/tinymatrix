@@ -37,6 +37,16 @@ def matrix_power(A: Matrix, n: int) -> Matrix:
     return A**n
 
 
+def cond(A: Matrix, p: Optional[Union[int, float, str]] = None) -> float:
+    """Compute the matrix condition number."""
+    return A.cond(p=p)
+
+
+def pinv(A: Matrix, rcond: float = 1e-15) -> Matrix:
+    """Compute the Moore-Penrose pseudo-inverse of a matrix."""
+    return A.pinv(rcond=rcond)
+
+
 __all__ = [
     "det",
     "inv",
@@ -51,4 +61,6 @@ __all__ = [
     "svd",
     "solve",
     "lstsq",
+    "cond",
+    "pinv",
 ]

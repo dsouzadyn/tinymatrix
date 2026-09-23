@@ -145,14 +145,14 @@ Licensed under the MIT License. See the LICENSE file for full text.
 * [x] Add benchmarking utilities and performance docs
 
 ### Phase 6: Advanced Features
-* [ ] Add sparse matrix support (CSR/CSC formats)
-* [ ] Add immutability mode (`frozen=True`)
-* [ ] Add matrix views (no-copy slicing where possible)
-* [ ] Add `.copy()` and copy-on-write semantics
-* [ ] Add stacking operations (vstack, hstack, block)
-* [ ] Add advanced indexing (fancy indexing, boolean masks)
-* [ ] Add matrix condition number calculation
-* [ ] Add pseudo-inverse (Moore-Penrose)
+* [x] Add sparse matrix support (CSR/CSC formats)
+* [x] Add immutability mode (`frozen=True`)
+* [x] Add matrix views (no-copy slicing where possible)
+* [x] Add `.copy()` and copy-on-write semantics
+* [x] Add stacking operations (vstack, hstack, block)
+* [x] Add advanced indexing (fancy indexing, boolean masks)
+* [x] Add matrix condition number calculation
+* [x] Add pseudo-inverse (Moore-Penrose)
 
 ### Phase 7: Documentation & Polish
 * [ ] Expand README with comprehensive examples
