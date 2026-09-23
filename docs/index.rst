@@ -9,11 +9,9 @@ multiplication, decompositions (LU, QR, Cholesky, SVD, Eigenvalues), solvers,
 sparse formats, and optimizations.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
    api
    PERFORMANCE
+   TRACING
    MIGRATION_NUMPY
 
 Indices and tables

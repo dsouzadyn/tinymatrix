@@ -17,6 +17,16 @@ from .linalg import (
     svd,
 )
 from .matrix import Matrix
+from .profiling import (
+    PerformanceTracer,
+    disable_tracing,
+    enable_tracing,
+    get_global_tracer,
+    is_tracing_enabled,
+    profile_code,
+    trace_op,
+    traced,
+)
 from .sparse import CSCMatrix, CSRMatrix
 from .stacking import block, hstack, vstack
 from .types import (
@@ -55,4 +65,12 @@ __all__ = [
     "lstsq",
     "cond",
     "pinv",
+    "PerformanceTracer",
+    "enable_tracing",
+    "disable_tracing",
+    "is_tracing_enabled",
+    "get_global_tracer",
+    "trace_op",
+    "traced",
+    "profile_code",
 ]

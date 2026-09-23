@@ -235,7 +235,14 @@ C_strassen = A.matmul_strassen(B, threshold=16)
 # Lazy evaluation tree (defers execution until evaluate())
 lazy_expr = (A.lazy() + B.lazy()) @ A.lazy()
 result = lazy_expr.evaluate()
-```
+
+# Performance tracing & Chrome Tracing export
+from tinymatrix import enable_tracing, disable_tracing
+tracer = enable_tracing(track_memory=True)
+_ = A @ B
+disable_tracing()
+print(tracer.format_summary_table())
+tracer.export_chrome_trace("trace.json")
 
 ---
 
@@ -246,8 +253,8 @@ Executable standalone scripts are provided in the [`examples/`](examples/) direc
 - [`examples/linear_regression.py`](examples/linear_regression.py): Ordinary least-squares line fitting.
 - [`examples/pagerank.py`](examples/pagerank.py): Markov transition matrix and power iteration PageRank algorithm.
 - [`examples/kalman_filter.py`](examples/kalman_filter.py): 1D tracking Kalman filter with state updates and covariance propagation.
+- [`benchmarks/trace.py`](benchmarks/trace.py): Timeline tracing and memory profiling CLI tool.
 - [`benchmarks/benchmark.py`](benchmarks/benchmark.py): Performance profiling script measuring speed across matrix sizes.
-
 ---
 
 ## 📚 Documentation & Guides
@@ -255,7 +262,7 @@ Executable standalone scripts are provided in the [`examples/`](examples/) direc
 - **Sphinx Documentation**: Complete HTML API docs built with the **Furo** theme in `docs/` (`uv run sphinx-build -b html docs docs/_build/html`).
 - **[NumPy Migration Guide](docs/MIGRATION_NUMPY.md)**: Detailed syntax translation table and comparison guide for NumPy users.
 - **[Performance & Complexity Guide](docs/PERFORMANCE.md)**: Asymptotic time and space complexity table for all operations.
-
+- **[Performance Tracing & Profiling Guide](docs/TRACING.md)**: Using `PerformanceTracer`, exporting to Perfetto / Chrome Tracing, and cProfile hotspot analysis.
 ---
 
 ## 🛠️ Development

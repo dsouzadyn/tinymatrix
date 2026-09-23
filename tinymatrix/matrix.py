@@ -13,6 +13,7 @@ from typing import (
 )
 
 from .exceptions import ShapeError, SingularMatrixError
+from .profiling import is_tracing_enabled, trace_op
 from .types import DTYPES, TinyMatrixData, TinyMatrixIndexPair, TinyMatrixNumeric
 
 
@@ -547,36 +548,54 @@ class Matrix:
         """Compute pivoted LU decomposition: P, L, U."""
         from .decompositions import lu
 
+        if is_tracing_enabled():
+            with trace_op("lu", category="decomposition", shape=self.shape()):
+                return lu(self)
         return lu(self)
 
     def qr(self, mode: str = "reduced") -> Tuple["Matrix", "Matrix"]:
         """Compute QR decomposition: Q, R."""
         from .decompositions import qr
 
+        if is_tracing_enabled():
+            with trace_op("qr", category="decomposition", shape=self.shape()):
+                return qr(self, mode=mode)
         return qr(self, mode=mode)
 
     def cholesky(self) -> "Matrix":
         """Compute Cholesky decomposition L such that A = L @ L.T."""
         from .decompositions import cholesky
 
+        if is_tracing_enabled():
+            with trace_op("cholesky", category="decomposition", shape=self.shape()):
+                return cholesky(self)
         return cholesky(self)
 
     def eig(self) -> Tuple[List[float], "Matrix"]:
         """Compute eigenvalues and eigenvectors."""
         from .decompositions import eig
 
+        if is_tracing_enabled():
+            with trace_op("eig", category="decomposition", shape=self.shape()):
+                return eig(self)
         return eig(self)
 
     def svd(self) -> Tuple["Matrix", List[float], "Matrix"]:
         """Compute Singular Value Decomposition: U, S, Vt."""
         from .decompositions import svd
 
+        if is_tracing_enabled():
+            with trace_op("svd", category="decomposition", shape=self.shape()):
+                return svd(self)
         return svd(self)
 
     def solve(self, b: Union["Matrix", Sequence[TinyMatrixNumeric]]) -> "Matrix":
         """Solve linear system A @ x = b."""
         from .decompositions import solve
 
+        if is_tracing_enabled():
+            with trace_op("solve", category="solver", shape=self.shape()):
+                return solve(self, b)
         return solve(self, b)
 
     def lstsq(
@@ -585,6 +604,9 @@ class Matrix:
         """Solve least squares min ||A @ x - b||_2."""
         from .decompositions import lstsq
 
+        if is_tracing_enabled():
+            with trace_op("lstsq", category="solver", shape=self.shape()):
+                return lstsq(self, b)
         return lstsq(self, b)
 
     def cond(self, p: Optional[Union[int, float, str]] = None) -> float:
@@ -1106,6 +1128,17 @@ class Matrix:
                 f"Cannot multiply: ({self.m}*{self.n}) @ ({other.m}*{other.n})"
             )
 
+        if is_tracing_enabled():
+            with trace_op(
+                "matmul",
+                category="linalg",
+                shape_a=self.shape(),
+                shape_b=other.shape(),
+            ):
+                return self._matmul_core(other)
+        return self._matmul_core(other)
+
+    def _matmul_core(self, other: "Matrix") -> "Matrix":
         result = Matrix(self.m, other.n, dtype=self.dtype)
         for row in range(self.m):
             for k in range(self.n):
@@ -1114,7 +1147,6 @@ class Matrix:
                     result.M[row][col] = self.cast(
                         result.M[row][col] + aik * other.M[k][col]
                     )
-
         return result
 
     @property
