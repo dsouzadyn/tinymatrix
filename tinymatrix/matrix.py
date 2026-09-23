@@ -506,6 +506,50 @@ class Matrix:
 
         return result
 
+    def lu(self) -> Tuple["Matrix", "Matrix", "Matrix"]:
+        """Compute pivoted LU decomposition: P, L, U."""
+        from .decompositions import lu
+
+        return lu(self)
+
+    def qr(self, mode: str = "reduced") -> Tuple["Matrix", "Matrix"]:
+        """Compute QR decomposition: Q, R."""
+        from .decompositions import qr
+
+        return qr(self, mode=mode)
+
+    def cholesky(self) -> "Matrix":
+        """Compute Cholesky decomposition L such that A = L @ L.T."""
+        from .decompositions import cholesky
+
+        return cholesky(self)
+
+    def eig(self) -> Tuple[List[float], "Matrix"]:
+        """Compute eigenvalues and eigenvectors."""
+        from .decompositions import eig
+
+        return eig(self)
+
+    def svd(self) -> Tuple["Matrix", List[float], "Matrix"]:
+        """Compute Singular Value Decomposition: U, S, Vt."""
+        from .decompositions import svd
+
+        return svd(self)
+
+    def solve(self, b: Union["Matrix", Sequence[TinyMatrixNumeric]]) -> "Matrix":
+        """Solve linear system A @ x = b."""
+        from .decompositions import solve
+
+        return solve(self, b)
+
+    def lstsq(
+        self, b: Union["Matrix", Sequence[TinyMatrixNumeric]]
+    ) -> Tuple["Matrix", float]:
+        """Solve least squares min ||A @ x - b||_2."""
+        from .decompositions import lstsq
+
+        return lstsq(self, b)
+
     # =========================================================================
     # Transformations: Reshape, Squeeze, Expand Dims
     # =========================================================================

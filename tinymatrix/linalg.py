@@ -2,6 +2,7 @@
 
 from typing import Optional, Union
 
+from .decompositions import cholesky, eig, lstsq, lu, qr, solve, svd
 from .matrix import Matrix
 from .types import TinyMatrixNumeric
 
@@ -43,4 +44,11 @@ __all__ = [
     "norm",
     "kron",
     "matrix_power",
+    "lu",
+    "qr",
+    "cholesky",
+    "eig",
+    "svd",
+    "solve",
+    "lstsq",
 ]

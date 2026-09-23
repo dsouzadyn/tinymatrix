@@ -129,13 +129,13 @@ Licensed under the MIT License. See the LICENSE file for full text.
 * [x] Add Kronecker product
 * [x] Add Hadamard (element-wise) product operator
 ### Phase 4: Decompositions & Solvers
-* [ ] Add LU decomposition
-* [ ] Add QR decomposition
-* [ ] Add Cholesky decomposition
-* [ ] Add SVD (Singular Value Decomposition)
-* [ ] Add eigenvalue/eigenvector computation
-* [ ] Add linear system solver `Ax = b`
-* [ ] Add least-squares solver
+* [x] Add LU decomposition
+* [x] Add QR decomposition
+* [x] Add Cholesky decomposition
+* [x] Add SVD (Singular Value Decomposition)
+* [x] Add eigenvalue/eigenvector computation
+* [x] Add linear system solver `Ax = b`
+* [x] Add least-squares solver
 
 ### Phase 5: Performance & Optimization
 * [ ] Optimize matrix multiplication (Strassen or blocked algorithms)

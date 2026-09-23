@@ -1,5 +1,19 @@
 from .exceptions import MatrixError, ShapeError, SingularMatrixError
-from .linalg import det, inv, kron, matrix_power, norm, rank
+from .linalg import (
+    cholesky,
+    det,
+    eig,
+    inv,
+    kron,
+    lstsq,
+    lu,
+    matrix_power,
+    norm,
+    qr,
+    rank,
+    solve,
+    svd,
+)
 from .matrix import Matrix
 from .types import (
     TinyMatrixData,
@@ -23,4 +37,11 @@ __all__ = [
     "norm",
     "kron",
     "matrix_power",
+    "lu",
+    "qr",
+    "cholesky",
+    "eig",
+    "svd",
+    "solve",
+    "lstsq",
 ]
