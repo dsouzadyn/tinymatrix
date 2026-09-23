@@ -550,6 +550,37 @@ class Matrix:
 
         return lstsq(self, b)
 
+    def matmul_blocked(self, other: "Matrix", block_size: int = 32) -> "Matrix":
+        """Perform blocked matrix multiplication."""
+        from .optimization import matmul_blocked
+
+        return matmul_blocked(self, other, block_size=block_size)
+
+    def matmul_strassen(self, other: "Matrix", threshold: int = 32) -> "Matrix":
+        """Perform Strassen matrix multiplication."""
+        from .optimization import matmul_strassen
+
+        return matmul_strassen(self, other, threshold=threshold)
+
+    def lazy(self):
+        """Wrap this matrix into a LazyMatrix for deferred expression evaluation."""
+        from .optimization import LazyMatrix
+
+        return LazyMatrix.from_matrix(self)
+
+    def to_numpy(self):
+        """Convert to NumPy ndarray."""
+        from .optimization import to_numpy
+
+        return to_numpy(self)
+
+    @classmethod
+    def from_numpy(cls, arr):
+        """Create a Matrix from a NumPy ndarray."""
+        from .optimization import from_numpy
+
+        return from_numpy(arr)
+
     # =========================================================================
     # Transformations: Reshape, Squeeze, Expand Dims
     # =========================================================================

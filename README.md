@@ -138,11 +138,11 @@ Licensed under the MIT License. See the LICENSE file for full text.
 * [x] Add least-squares solver
 
 ### Phase 5: Performance & Optimization
-* [ ] Optimize matrix multiplication (Strassen or blocked algorithms)
-* [ ] Add optional NumPy fallback mode for performance comparisons
-* [ ] Add lazy evaluation for chained operations (optional)
-* [ ] Profile and optimize hotspots
-* [ ] Add benchmarking utilities and performance docs
+* [x] Optimize matrix multiplication (Strassen or blocked algorithms)
+* [x] Add optional NumPy fallback mode for performance comparisons
+* [x] Add lazy evaluation for chained operations (optional)
+* [x] Profile and optimize hotspots
+* [x] Add benchmarking utilities and performance docs
 
 ### Phase 6: Advanced Features
 * [ ] Add sparse matrix support (CSR/CSC formats)
